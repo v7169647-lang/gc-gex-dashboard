@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 
+
 def calculate_gex(df):
     df = df.copy()
 
@@ -22,9 +23,9 @@ def calculate_gex(df):
         "total_gex": float(total_gex)
     }
 
+
 def calculate_gamma_flip(df):
     temp = df.copy()
-
     temp = temp.sort_values("strike")
 
     temp["gex"] = temp["gamma"] * temp["oi"]
@@ -37,6 +38,7 @@ def calculate_gamma_flip(df):
             return temp.iloc[i]["strike"]
 
     return temp["strike"].median()
+
 
 def calculate_max_pain(df):
     strikes = sorted(df["strike"].unique())
@@ -66,3 +68,35 @@ def calculate_max_pain(df):
             max_pain = price
 
     return max_pain
+
+
+def generate_sigma_levels(gamma_flip, sigma_size):
+    levels = []
+
+    sigmas = [
+        3,
+        2.5,
+        2,
+        1.5,
+        1,
+        0.5,
+        -0.5,
+        -1,
+        -1.5,
+        -2,
+        -2.5,
+        -3
+    ]
+
+    for s in sigmas:
+        price = round(
+            gamma_flip + (sigma_size * s),
+            1
+        )
+
+        levels.append({
+            "price": price,
+            "sigma": s
+        })
+
+    return levels
