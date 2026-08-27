@@ -39,12 +39,54 @@ st.divider()
 
 # Sigma levels
 st.subheader("📐 Sigma Levels")
+st.subheader("📐 Automatic GEX Levels")
 
-sigma_size = st.number_input(
-    "Sigma Distance",
-    min_value=0.1,
-    value=20.7,
-    step=0.1
+levels = []
+
+for level in result["sigma_levels"]:
+    levels.append({
+        "Price": level["price"],
+        "Label": level["label"],
+        "Type": level["type"]
+    })
+
+levels.append({
+    "Price": result["call_wall"],
+    "Label": "Call Wall",
+    "Type": "res"
+})
+
+levels.append({
+    "Price": result["put_wall"],
+    "Label": "Put Wall",
+    "Type": "sup"
+})
+
+levels.append({
+    "Price": result["gamma_flip"],
+    "Label": "Gamma Flip",
+    "Type": "flip"
+})
+
+levels.append({
+    "Price": result["max_pain"],
+    "Label": "Max Pain",
+    "Type": "mpain"
+})
+
+levels_df = pd.DataFrame(levels)
+
+levels_df = levels_df.sort_values(
+    "Price",
+    ascending=False
+)
+
+st.dataframe(
+    levels_df,
+    use_container_width=True,
+    hide_index=True
+)
+
 )
 
 gamma_flip = result["gamma_flip"]
