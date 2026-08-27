@@ -90,7 +90,29 @@ st.dataframe(
     use_container_width=True,
     hide_index=True
 )
+st.dataframe(
+    levels_df,
+    use_container_width=True,
+    hide_index=True
+)
 
+st.subheader("📋 GEX Output")
+
+output_lines = []
+
+for _, row in levels_df.iterrows():
+
+    price = row["Price"]
+    label = row["Label"]
+    level_type = row["Type"]
+
+    output_lines.append(
+        f"{price:.1f},{label},{level_type}"
+    )
+
+output_text = ";".join(output_lines)
+
+st.code(output_text)
 
 st.divider()
 
