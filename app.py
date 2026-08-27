@@ -11,56 +11,33 @@ st.set_page_config(
     layout="wide"
 )
 
-
 st.title("🟡 GC Gold GEX Dashboard")
 st.caption("COMEX Gold Futures Options — GEX Analysis")
 
 
-# --------------------------------------------------
-# LOAD DATA
-# --------------------------------------------------
-
+# Load options data
 df = pd.read_csv("data/options_chain.csv")
 
+
+# Calculate GEX
 result = calculate_gex(df)
 
 
-# --------------------------------------------------
-# MAIN LEVELS
-# --------------------------------------------------
-
+# Key levels
 st.subheader("🎯 Key GEX Levels")
 
 col1, col2, col3, col4 = st.columns(4)
 
-col1.metric(
-    "🔴 Call Wall",
-    result["call_wall"]
-)
-
-col2.metric(
-    "🟢 Put Wall",
-    result["put_wall"]
-)
-
-col3.metric(
-    "🟡 Gamma Flip",
-    result["gamma_flip"]
-)
-
-col4.metric(
-    "🔵 Max Pain",
-    result["max_pain"]
-)
+col1.metric("🔴 Call Wall", result["call_wall"])
+col2.metric("🟢 Put Wall", result["put_wall"])
+col3.metric("🟡 Gamma Flip", result["gamma_flip"])
+col4.metric("🔵 Max Pain", result["max_pain"])
 
 
 st.divider()
 
 
-# --------------------------------------------------
-# SIGMA LEVELS
-# --------------------------------------------------
-
+# Sigma levels
 st.subheader("📐 Sigma Levels")
 
 sigma_size = st.number_input(
@@ -70,18 +47,31 @@ sigma_size = st.number_input(
     step=0.1
 )
 
-sigma_levels = generate_sigma_levels(
-    result["gamma_flip"],
-    sigma_size
-)
+gamma_flip = result["gamma_flip"]
 
+sigma_values = [
+    3,
+    2.5,
+    2,
+    1.5,
+    1,
+    0.5,
+    -0.5,
+    -1,
+    -1.5,
+    -2,
+    -2.5,
+    -3
+]
 
 sigma_data = []
 
-for level in sigma_levels:
+for sigma in sigma_values:
 
-    sigma = level["sigma"]
-    price = level["price"]
+    price = round(
+        gamma_flip + (sigma_size * sigma),
+        1
+    )
 
     if sigma > 0:
         label = f"+{sigma}σ"
@@ -106,17 +96,10 @@ st.dataframe(
 st.divider()
 
 
-# --------------------------------------------------
-# GEX CHART
-# --------------------------------------------------
-
-st.subheader("📊 GEX Levels Chart")
-
+# GEX Chart
+st.subheader("📊 GEX Chart")
 
 fig = go.Figure()
-
-
-# Option GEX bars
 
 fig.add_trace(
     go.Bar(
@@ -127,17 +110,12 @@ fig.add_trace(
 )
 
 
-# Call Wall
-
 fig.add_vline(
     x=result["call_wall"],
     line_width=2,
     line_dash="dash",
     annotation_text="Call Wall"
 )
-
-
-# Put Wall
 
 fig.add_vline(
     x=result["put_wall"],
@@ -146,18 +124,11 @@ fig.add_vline(
     annotation_text="Put Wall"
 )
 
-
-# Gamma Flip
-
 fig.add_vline(
     x=result["gamma_flip"],
     line_width=3,
-    line_dash="solid",
     annotation_text="Gamma Flip"
 )
-
-
-# Max Pain
 
 fig.add_vline(
     x=result["max_pain"],
@@ -169,11 +140,9 @@ fig.add_vline(
 
 fig.update_layout(
     xaxis_title="Strike Price",
-    yaxis_title="Gamma Exposure",
-    height=600,
-    hovermode="x unified"
+    yaxis_title="GEX",
+    height=600
 )
-
 
 st.plotly_chart(
     fig,
@@ -181,10 +150,7 @@ st.plotly_chart(
 )
 
 
-# --------------------------------------------------
-# OPTIONS DATA
-# --------------------------------------------------
-
+# Options Chain
 st.subheader("📋 Options Chain")
 
 st.dataframe(
