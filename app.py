@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
 
-from gex_engine import calculate_gex, generate_sigma_levels
+from gex_engine import calculate_gex
 
 
 st.set_page_config(
