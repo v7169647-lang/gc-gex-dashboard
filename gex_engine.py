@@ -5,10 +5,8 @@ import numpy as np
 def calculate_gex(df):
     df = df.copy()
 
-    # GEX
     df["gex"] = df["gamma"] * df["oi"]
 
-    # Call / Put walls
     call_data = df[df["type"].str.upper() == "C"]
     put_data = df[df["type"].str.upper() == "P"]
 
@@ -28,14 +26,13 @@ def calculate_gex(df):
 
     total_gex = df["gex"].sum()
 
-    # Gamma Flip
     gamma_flip = calculate_gamma_flip(df)
-
-    # Max Pain
     max_pain = calculate_max_pain(df)
 
-    # Sigma
-    sigma_size = calculate_sigma_size(df, gamma_flip)
+    sigma_size = calculate_sigma_size(
+        df,
+        gamma_flip
+    )
 
     sigma_levels = generate_sigma_levels(
         gamma_flip,
@@ -61,7 +58,6 @@ def calculate_gamma_flip(df):
     temp["cum_gex"] = temp["gex"].cumsum()
 
     for i in range(1, len(temp)):
-
         previous = temp.iloc[i - 1]["cum_gex"]
         current = temp.iloc[i]["cum_gex"]
 
@@ -70,7 +66,6 @@ def calculate_gamma_flip(df):
 
         if (previous < 0 and current > 0) or \
            (previous > 0 and current < 0):
-
             return temp.iloc[i]["strike"]
 
     return temp["strike"].median()
@@ -106,24 +101,27 @@ def calculate_max_pain(df):
 
 
 def calculate_sigma_size(df, gamma_flip):
-    """
-    Automatically estimate 1σ distance
-    from the strike distribution.
-    """
-
     strikes = df["strike"].astype(float)
 
-    distance = np.abs(strikes - gamma_flip)
+    distance = np.abs(
+        strikes - gamma_flip
+    )
 
     sigma = distance.median()
 
     if sigma <= 0:
-        sigma = (strikes.max() - strikes.min()) / 12
+        sigma = (
+            strikes.max() -
+            strikes.min()
+        ) / 12
 
     return round(sigma, 1)
 
 
-def generate_sigma_levels(gamma_flip, sigma_size):
+def generate_sigma_levels(
+    gamma_flip,
+    sigma_size
+):
 
     levels = []
 
@@ -145,7 +143,8 @@ def generate_sigma_levels(gamma_flip, sigma_size):
     for sigma in sigma_values:
 
         price = round(
-            gamma_flip + sigma * sigma_size,
+            gamma_flip +
+            sigma * sigma_size,
             1
         )
 
