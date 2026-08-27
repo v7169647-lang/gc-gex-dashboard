@@ -1,0 +1,8 @@
+result = calculate_gex(df)
+
+c1, c2, c3, c4 = st.columns(4)
+
+c1.metric("Call Wall", result["call_wall"])
+c2.metric("Put Wall", result["put_wall"])
+c3.metric("Gamma Flip", result["gamma_flip"])
+c4.metric("Max Pain", result["max_pain"])
