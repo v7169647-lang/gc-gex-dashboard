@@ -22,11 +22,14 @@ df = pd.read_csv("data/options_chain.csv")
 # Calculate GEX
 result = calculate_gex(df)
 
-# Create GEX column for chart
+# GEX column for chart
 df["gex"] = df["gamma"] * df["oi"]
 
 
-# Key levels
+# --------------------------------------------------
+# KEY LEVELS
+# --------------------------------------------------
+
 st.subheader("🎯 Key GEX Levels")
 
 col1, col2, col3, col4 = st.columns(4)
@@ -40,7 +43,10 @@ col4.metric("🔵 Max Pain", result["max_pain"])
 st.divider()
 
 
-# Automatic GEX Levels
+# --------------------------------------------------
+# AUTOMATIC LEVELS
+# --------------------------------------------------
+
 st.subheader("📐 Automatic GEX Levels")
 
 levels = []
@@ -90,11 +96,11 @@ st.dataframe(
     use_container_width=True,
     hide_index=True
 )
-st.dataframe(
-    levels_df,
-    use_container_width=True,
-    hide_index=True
-)
+
+
+# --------------------------------------------------
+# GEX OUTPUT
+# --------------------------------------------------
 
 st.subheader("📋 GEX Output")
 
@@ -114,10 +120,14 @@ output_text = ";".join(output_lines)
 
 st.code(output_text)
 
+
 st.divider()
 
 
-# GEX Chart
+# --------------------------------------------------
+# GEX CHART
+# --------------------------------------------------
+
 st.subheader("📊 GEX Chart")
 
 fig = go.Figure()
@@ -171,7 +181,10 @@ st.plotly_chart(
 )
 
 
-# Options Chain
+# --------------------------------------------------
+# OPTIONS CHAIN
+# --------------------------------------------------
+
 st.subheader("📋 Options Chain")
 
 st.dataframe(
