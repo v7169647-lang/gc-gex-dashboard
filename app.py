@@ -15,13 +15,16 @@ st.title("🟡 GC Gold GEX Dashboard")
 st.caption("COMEX Gold Futures Options — GEX Analysis")
 
 
-# Load options data
+# Load data
 df = pd.read_csv("data/options_chain.csv")
 
 
 # Calculate GEX
 result = calculate_gex(df)
+
+# Create GEX column for chart
 df["gex"] = df["gamma"] * df["oi"]
+
 
 # Key levels
 st.subheader("🎯 Key GEX Levels")
@@ -37,8 +40,7 @@ col4.metric("🔵 Max Pain", result["max_pain"])
 st.divider()
 
 
-# Sigma levels
-st.subheader("📐 Sigma Levels")
+# Automatic GEX Levels
 st.subheader("📐 Automatic GEX Levels")
 
 levels = []
@@ -49,6 +51,7 @@ for level in result["sigma_levels"]:
         "Label": level["label"],
         "Type": level["type"]
     })
+
 
 levels.append({
     "Price": result["call_wall"],
@@ -74,6 +77,7 @@ levels.append({
     "Type": "mpain"
 })
 
+
 levels_df = pd.DataFrame(levels)
 
 levels_df = levels_df.sort_values(
@@ -83,53 +87,6 @@ levels_df = levels_df.sort_values(
 
 st.dataframe(
     levels_df,
-    use_container_width=True,
-    hide_index=True
-)
-
-)
-
-gamma_flip = result["gamma_flip"]
-
-sigma_values = [
-    3,
-    2.5,
-    2,
-    1.5,
-    1,
-    0.5,
-    -0.5,
-    -1,
-    -1.5,
-    -2,
-    -2.5,
-    -3
-]
-
-sigma_data = []
-
-for sigma in sigma_values:
-
-    price = round(
-        gamma_flip + (sigma_size * sigma),
-        1
-    )
-
-    if sigma > 0:
-        label = f"+{sigma}σ"
-    else:
-        label = f"{sigma}σ"
-
-    sigma_data.append({
-        "Price": price,
-        "Level": label
-    })
-
-
-sigma_df = pd.DataFrame(sigma_data)
-
-st.dataframe(
-    sigma_df,
     use_container_width=True,
     hide_index=True
 )
@@ -182,7 +139,7 @@ fig.add_vline(
 
 fig.update_layout(
     xaxis_title="Strike Price",
-    yaxis_title="GEX",
+    yaxis_title="Gamma Exposure",
     height=600
 )
 
