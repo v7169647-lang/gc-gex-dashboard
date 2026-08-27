@@ -71,6 +71,7 @@ def calculate_max_pain(df):
 
 
 def generate_sigma_levels(gamma_flip, sigma_size):
+
     levels = []
 
     sigmas = [
@@ -89,6 +90,7 @@ def generate_sigma_levels(gamma_flip, sigma_size):
     ]
 
     for s in sigmas:
+
         price = round(
             gamma_flip + (sigma_size * s),
             1
