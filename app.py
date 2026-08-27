@@ -21,7 +21,7 @@ df = pd.read_csv("data/options_chain.csv")
 
 # Calculate GEX
 result = calculate_gex(df)
-
+df["gex"] = df["gamma"] * df["oi"]
 
 # Key levels
 st.subheader("🎯 Key GEX Levels")
