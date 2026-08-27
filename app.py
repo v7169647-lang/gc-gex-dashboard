@@ -51,11 +51,34 @@ st.subheader("📐 Automatic GEX Levels")
 
 levels = []
 
-for level in result["sigma_levels"]:
+# Sigma levels
+gamma_flip = result["gamma_flip"]
+
+sigma_size = 20.7
+
+sigma_values = [
+    3, 2.5, 2, 1.5, 1, 0.5,
+    -0.5, -1, -1.5, -2, -2.5, -3
+]
+
+for sigma in sigma_values:
+
+    price = round(
+        gamma_flip + (sigma * sigma_size),
+        1
+    )
+
+    if sigma > 0:
+        label = f"+{sigma}σ"
+        level_type = "opu"
+    else:
+        label = f"{sigma}σ"
+        level_type = "opd"
+
     levels.append({
-        "Price": level["price"],
-        "Label": level["label"],
-        "Type": level["type"]
+        "Price": price,
+        "Label": label,
+        "Type": level_type
     })
 
 
