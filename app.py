@@ -37,8 +37,7 @@ if gex_text:
     st.dataframe(
         levels_df,
         use_container_width=True
-    )
-st.subheader("Daily GEX Input")
+ st.subheader("Daily GEX Input")
 
 gex_text = st.text_area(
     "Paste Levels",
@@ -47,7 +46,7 @@ gex_text = st.text_area(
 4625,Max Pain,mpain
 4620,Gamma Flip,flip
 4600,Put Wall,sup"""
-)
+)   
 
 # Load data
 uploaded_file = st.file_uploader(
