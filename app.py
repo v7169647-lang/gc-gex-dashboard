@@ -13,7 +13,41 @@ st.set_page_config(
 
 st.title("🟡 GC Gold GEX Dashboard")
 st.caption("COMEX Gold Futures Options — GEX Analysis")
+st.title("🟡 GC Gold GEX Dashboard")
+st.caption("COMEX Gold Futures Options — GEX Analysis")
 
+levels = []
+
+if gex_text:
+
+    for line in gex_text.strip().split("\n"):
+
+        parts = line.split(",")
+
+        if len(parts) == 3:
+
+            levels.append({
+                "Price": float(parts[0]),
+                "Label": parts[1],
+                "Type": parts[2]
+            })
+
+    levels_df = pd.DataFrame(levels)
+
+    st.dataframe(
+        levels_df,
+        use_container_width=True
+    )
+st.subheader("Daily GEX Input")
+
+gex_text = st.text_area(
+    "Paste Levels",
+    height=150,
+    placeholder="""4690,Call Wall,res
+4625,Max Pain,mpain
+4620,Gamma Flip,flip
+4600,Put Wall,sup"""
+)
 
 # Load data
 uploaded_file = st.file_uploader(
