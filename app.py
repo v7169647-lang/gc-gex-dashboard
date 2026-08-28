@@ -38,7 +38,6 @@ if gex_text:
         levels_df,
         use_container_width=True
  st.subheader("Daily GEX Input")
-
 gex_text = st.text_area(
     "Paste Levels",
     height=150,
